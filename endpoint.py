@@ -6,7 +6,7 @@ def get_argparser():
     argparser = argparse.ArgumentParser(description='Bluetooth endpoint')
     argparser.add_argument("-server", action="store_true", help="Act as a Server, Wait for data")
     argparser.add_argument("-client", action="store_true", help="Act as a Client, Send data")
-    argparser.add_argument("--target", type=str, help="If client, please specify target connection")
+    argparser.add_argument("--addr", type=str, help="If client, please specify target connection")
     argparser.add_argument('--bytes', type=int, default=256, help='Send N bytes to server and recieve them back')
     return argparser
 
@@ -14,7 +14,7 @@ def get_argparser():
 if __name__ == "__main__":
     args = get_argparser().parse_args()
     if args.server:
-        server = BTServer()
+        server = BTServer(args.addr)
         server.run()
         pass
     elif args.client:

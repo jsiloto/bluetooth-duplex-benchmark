@@ -29,7 +29,7 @@ class BTClient(object):
 
 class BTServer(object):
 
-    def __init__(self):
+    def __init__(self, uuid):
         self.server_sock = BluetoothSocket(RFCOMM)
         self.server_sock.bind(("", PORT_ANY))
         self.server_sock.listen(1)
@@ -66,4 +66,4 @@ class BTServer(object):
         print("All done.")
 
     def __del__(self):
-        self.sock.close()
+        self.server_sock.close()
