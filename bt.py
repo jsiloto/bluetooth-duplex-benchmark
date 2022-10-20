@@ -19,23 +19,27 @@ class BTClient(object):
 
     def send(self, kbytes):
 
-        chunk = 4 # %kb chuncks
+        message_size=27
+        chunk = 3 # %kb chuncks
         num_chunks = kbytes//chunk
         t = ''.join(random.choices(string.ascii_uppercase +
                                    string.digits, k=1024 * chunk))
         tt = t.encode()
 
         start = time.time()
-        for i in range(num_chunks):
-            self.sock.send(tt)
+        for j in range(kbytes//message_size):
+            print("Message", j)
+            for i in range(message_size//chunk):
+                self.sock.send(tt)
 
-        d = ""
-        while len(d) <= 1000:
-            # Send request to USB meter
-            d += self.sock.recv(256)
+            d = b""
+            while len(d) <= 1000:
+                # Send request to USB meter
+                d += self.sock.recv(256)
+            print(d)
         end = time.time()
         print(end - start)
-        return d
+        return
 
 class BTServer(object):
 

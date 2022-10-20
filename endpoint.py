@@ -21,6 +21,6 @@ if __name__ == "__main__":
         if not args.addr:
             raise(ValueError("No target server specified"))
         client = BTClient(args.addr)
-        d = client.send(args.kbytes)
-        print(d)
+        client.send(args.kbytes)
+
 
