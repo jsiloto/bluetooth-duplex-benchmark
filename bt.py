@@ -1,5 +1,9 @@
 # Bits and pieces copied from
 # https://github.com/pybluez/pybluez/blob/master/examples/simple/
+import random
+import string
+import time
+
 from bluetooth import *
 import lorem
 
@@ -13,19 +17,25 @@ class BTClient(object):
     def __del__(self):
         self.sock.close()
 
-    def query(self):
-        d = b""
-        t = lorem.text()
-        print(t)
+    def send(self, kbytes):
 
-        while len(d) != 130:
+        chunk = 4 # %kb chuncks
+        num_chunks = kbytes//chunk
+        t = ''.join(random.choices(string.ascii_uppercase +
+                                   string.digits, k=1024 * chunk))
+        tt = t.encode()
+
+        start = time.time()
+        for i in range(num_chunks):
+            self.sock.send(tt)
+
+        d = ""
+        while len(d) <= 1000:
             # Send request to USB meter
-            self.sock.send((0xF0).to_bytes(1, byteorder="big"))
-            d += self.sock.recv(130)
-        data = self.processdata(d)
-        return data
-
-
+            d += self.sock.recv(256)
+        end = time.time()
+        print(end - start)
+        return d
 
 class BTServer(object):
 
@@ -52,17 +62,26 @@ class BTServer(object):
             print("Accepted connection from", client_info)
 
             try:
+                total = 0
                 while True:
                     data = client_sock.recv(1024)
                     if not data:
                         break
-                    print("Received", data)
+                    total += len(data)
+                    print("Received", total)
+                    if total >= 27e3:
+                        t = ''.join(random.choices(string.ascii_uppercase +
+                                                   string.digits, k=1024))
+                        client_sock.send(t.encode())
+                        total = 0
             except OSError:
                 pass
+            except KeyboardInterrupt:
+                exit()
 
             print("Disconnected.")
-
             client_sock.close()
+
         self.server_sock.close()
         print("All done.")
 

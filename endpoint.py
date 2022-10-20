@@ -7,7 +7,7 @@ def get_argparser():
     argparser.add_argument("-server", action="store_true", help="Act as a Server, Wait for data")
     argparser.add_argument("-client", action="store_true", help="Act as a Client, Send data")
     argparser.add_argument("--addr", type=str, help="If client, please specify target connection")
-    argparser.add_argument('--bytes', type=int, default=256, help='Send N bytes to server and recieve them back')
+    argparser.add_argument('--kbytes', type=int, default=1, help='Send N bytes to server and recieve them back')
     return argparser
 
 
@@ -18,7 +18,9 @@ if __name__ == "__main__":
         server.run()
         pass
     elif args.client:
-        if not args.target:
+        if not args.addr:
             raise(ValueError("No target server specified"))
-        BTClient(args.target)
+        client = BTClient(args.addr)
+        d = client.send(args.kbytes)
+        print(d)
 
