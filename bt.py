@@ -39,29 +39,30 @@ class BTServer(object):
         self.uuid = "94f39d29-7d6d-437d-973b-fba39e49d4ee"
 
     def run(self):
+
         advertise_service(self.server_sock, "SampleServer", service_id=self.uuid,
-                                    service_classes=[self.uuid, SERIAL_PORT_CLASS],
-                                    profiles=[SERIAL_PORT_PROFILE],
-                                    # protocols=[bluetooth.OBEX_UUID]
-                                    )
+                                        service_classes=[self.uuid, SERIAL_PORT_CLASS],
+                                        profiles=[SERIAL_PORT_PROFILE],
+                                        # protocols=[bluetooth.OBEX_UUID]
+                                        )
 
         print("Waiting for connection on RFCOMM channel", self.port)
+        while (True):
+            client_sock, client_info = self.server_sock.accept()
+            print("Accepted connection from", client_info)
 
-        client_sock, client_info = self.server_sock.accept()
-        print("Accepted connection from", client_info)
+            try:
+                while True:
+                    data = client_sock.recv(1024)
+                    if not data:
+                        break
+                    print("Received", data)
+            except OSError:
+                pass
 
-        try:
-            while True:
-                data = client_sock.recv(1024)
-                if not data:
-                    break
-                print("Received", data)
-        except OSError:
-            pass
+            print("Disconnected.")
 
-        print("Disconnected.")
-
-        client_sock.close()
+            client_sock.close()
         self.server_sock.close()
         print("All done.")
 
