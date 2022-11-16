@@ -14,13 +14,13 @@ def get_argparser():
 if __name__ == "__main__":
     args = get_argparser().parse_args()
     if args.server:
-        server = BTServer(args.addr)
+        server = BTServer()
         server.run()
         pass
     elif args.client:
         if not args.addr:
             raise(ValueError("No target server specified"))
         client = BTClient(args.addr)
-        client.send(args.kbytes)
+        d = client.send(args.kbytes)
 
 
